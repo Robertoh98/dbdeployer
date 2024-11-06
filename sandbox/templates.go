@@ -158,6 +158,9 @@ var (
 	//go:embed templates/single/connection_info_sql.gotxt
 	connectionInfoSql string
 
+	//go:embed templates/single/connection_info_sql_84.gotxt
+	connectionInfoSql84 string
+
 	//go:embed templates/single/connection_info_json.gotxt
 	ConnectionInfoJson string
 
@@ -363,7 +366,7 @@ var (
 			Notes:       "",
 			Contents:    connectionInfoSql,
 		},
-		globals.TmplConnectionInfoSql: TemplateDesc{
+		globals.TmplConnectionInfoSql84: TemplateDesc{
 			Description: "connection info to replicate from this sandbox for 8.4.X",
 			Notes:       "",
 			Contents:    connectionInfoSql84,

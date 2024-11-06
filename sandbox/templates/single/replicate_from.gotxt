@@ -156,7 +156,13 @@ fi
 
 master_status=/tmp/mstatus$$
 
-$master_use_script -e 'show master status\G' > $master_status
+if [ "$master_short_version" == "8.0" -o "$master_short_version" == "5.7" -o "$master_short_version" == "5.6" ]
+then
+    $master_use_script -e "show master status\G" > $master_status
+else
+    $master_use_script -e 'show binary log status\G' > $master_status
+fi
+
 binlog_file=$(grep File < $master_status | awk '{print $2}')
 binlog_pos=$(grep Position < $master_status | awk '{print $2}')
 rm -f $master_status
@@ -212,9 +218,20 @@ fi
 
 if [ -n "$using_gtid" ]
 then
-    connection_string=$(cat $master_connection ; echo -n ", master_auto_position=1")
-else 
-    connection_string=$(cat $master_connection ; echo -n ', master_log_file="'$binlog_file'", master_log_pos='$binlog_pos )
+
+    if [ "$slave_short_version" == "8.4" ]
+    then
+        connection_string=$(cat $master_connection ; echo -n ", source_auto_position=1")
+    else
+        connection_string=$(cat $master_connection ; echo -n ", master_auto_position=1")
+    fi
+else
+    if [ "$slave_short_version" == "8.4" ]
+    then
+        connection_string=$(cat $master_connection ; echo -n ', source_log_file="'$binlog_file'", source_log_pos='$binlog_pos )
+    else
+        connection_string=$(cat $master_connection ; echo -n ', master_log_file="'$binlog_file'", master_log_pos='$binlog_pos )
+    fi
     if [ -f clone_replication.sql ]
     then
         connection_string=$(cat $master_connection ; echo -n ", " ; cat clone_replication.sql)
@@ -222,9 +239,12 @@ else
 fi
 
 # If master is 8.0, the slave must be at least 8.0
-if [ "$master_short_version" == "8.0" ]
+if [ "$master_short_version" == "8.0" -o "$master_short_version" == "8.4" ]
 then
-    connection_string="$connection_string, GET_MASTER_PUBLIC_KEY=1"
+    if [ "$master_short_version" == "8.0" ] then
+        connection_string="$connection_string, GET_MASTER_PUBLIC_KEY=1"
+    else
+        connection_string="$connection_string, GET_SOURCE_PUBLIC_KEY=1"
 fi
 
 echo "Connecting to $master_path"
@@ -236,12 +256,27 @@ if [ -f clone_replication.sql ]
 then
     rm -f clone_replication.sql
 fi
-$SBDIR/use -v -e 'start slave'
-$SBDIR/use -v -e 'SHOW SLAVE STATUS\G' | grep "\(Running:\|Master_Log_Pos\|\<Master_Log_File\|Retrieved\|Executed\|Auto_Position\)"
+
+if [ "$slave_short_version" == "8.4" ]
+then
+    $SBDIR/use -v -e 'START REPLICA'
+    $SBDIR/use -v -e 'SHOW REPLICA STATUS\G' | grep "\(Running:\|Source_Log_Pos\|\<Source_Log_File\|Retrieved\|Executed\|Auto_Position\)"
+else
+    $SBDIR/use -v -e 'START SLAVE'
+    $SBDIR/use -v -e 'SHOW SLAVE STATUS\G' | grep "\(Running:\|Master_Log_Pos\|\<Master_Log_File\|Retrieved\|Executed\|Auto_Position\)"
+fi
+
 date > $active_replication
 echo "Connected to $master_path" >> $active_replication
 echo "#!{{.ShellPath}}" > $remove_replication
-echo "$SBDIR/use -v -e 'stop slave; reset slave'" >> $remove_replication
+
+if [ "$slave_short_version" == "8.4" ]
+then
+    echo "$SBDIR/use -v -e 'stop replica; reset replica'" >> $remove_replication
+else
+    echo "$SBDIR/use -v -e 'stop slave; reset slave'" >> $remove_replication
+fi
+
 echo "rm -f $active_replication" >> $remove_replication
 chmod +x $remove_replication
 

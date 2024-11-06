@@ -363,6 +363,11 @@ var (
 			Notes:       "",
 			Contents:    connectionInfoSql,
 		},
+		globals.TmplConnectionInfoSql: TemplateDesc{
+			Description: "connection info to replicate from this sandbox for 8.4.X",
+			Notes:       "",
+			Contents:    connectionInfoSql84,
+		},
 		globals.TmplConnectionInfoConf: TemplateDesc{
 			Description: "connection info to replicate from this sandbox (.conf)",
 			Notes:       "",

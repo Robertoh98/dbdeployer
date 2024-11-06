@@ -111,6 +111,7 @@ const (
 	TmplSbLocked                = "sb_locked"
 	TmplSbInclude               = "sb_include"
 	TmplConnectionInfoSql       = "connection_info_sql"
+	TmplConnectionInfoSql_84    = "connection_info_sql_84"
 	TmplMetadata                = "metadata"
 	TmplSemisyncMasterOptions   = "semisync_master_options"
 	TmplGrants57                = "grants57"

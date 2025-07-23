@@ -128,6 +128,9 @@ var (
 	//go:embed templates/single/repl_crash_safe_options.gotxt
 	replCrashSafeOptions string
 
+	//go:embed templates/single/repl_crash_safe_options84.gotxt
+	replCrashSafeOptions84 string
+
 	//go:embed templates/single/gtid_options_56.gotxt
 	gtidOptions56 string
 
@@ -220,6 +223,11 @@ var (
 			Description: "Replication crash safe options",
 			Notes:       "",
 			Contents:    replCrashSafeOptions,
+		},
+		globals.TmplReplCrashSafeOptions84: TemplateDesc{
+			Description: "Replication crash safe options for 8.4.x",
+			Notes:       "",
+			Contents:    replCrashSafeOptions84,
 		},
 		globals.TmplExposeDdTables: TemplateDesc{
 			Description: "Commands needed to enable data dictionary table usage",

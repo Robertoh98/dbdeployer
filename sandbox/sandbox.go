@@ -940,11 +940,12 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 			{globals.ScriptWipeAndRestart, globals.TmplWipeAndRestart, true},
 		},
 	}
-	if shortVersion == "8.4"{
-		sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptGrantsMysql, globals.TmplConnectionInfoSql, false})
-	}else{
-		sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptGrantsMysql, globals.TmplConnectionInfoSql84, false})
+	
+	tmplConnection := globals.TmplConnectionInfoSql84
+	if strings.HasPrefix(shortVersion, "5") || strings.HasPrefix(shortVersion, "8.0") {
+		tmplConnection = globals.TmplConnectionInfoSql
 	}
+	sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptConnectionSql, tmplConnection, false})
 
 	if sandboxDef.EnableAdminAddress {
 		sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptUseAdmin, globals.TmplUseAdmin, true})

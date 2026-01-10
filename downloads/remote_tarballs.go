@@ -23,7 +23,7 @@ import (
 	"time"
 
 	"github.com/datacharmer/dbdeployer/common"
-	"jaytaylor.com/html2text"
+	"jaytaylor.com/html2text/2"
 )
 
 type TarballDef struct {

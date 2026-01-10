@@ -454,6 +454,21 @@
     "date_added": "2021-05-16 14:16"
    },
    {
+    "name": "mysql-5.7.44-linux-glibc2.12-x86_64.tar.gz",
+    "checksum": "MD5:d7c8436bbf456e9a4398011a0c52bc40",
+    "OS": "linux",
+    "arch": "x86_64",
+    "url": "https://downloads.mysql.com/archives/get/p/23/file/mysql-5.7.44-linux-glibc2.12-x86_64.tar.gz",
+    "flavor": "mysql",
+    "minimal": false,
+    "size": 694785800,
+    "short_version": "5.7",
+    "version": "5.7.44",
+    "updated_by": "addUrltoCollection",
+    "notes": "added with version 1.74.0",
+    "date_added": "2026-01-10 14:45"
+   },
+   {
     "name": "mysql-8.0.13-linux-glibc2.12-x86_64.tar.xz",
     "checksum": "SHA512:a15cbae5ba6e7f908da528143549d607cedd3970e579bf22b561942105349a5b20b289950a5ae3c2ef569b89e2a46ed58da50981fa8e6604b64e4224e5b283d3",
     "OS": "Linux",
@@ -1327,6 +1342,21 @@
     "date_added": "2024-07-26 08:28"
    },
    {
+    "name": "mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz",
+    "checksum": "MD5:f4a07a0e463ff0d2858dcfedce0fee59",
+    "OS": "linux",
+    "arch": "x86_64",
+    "url": "https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.44-linux-glibc2.28-x86_64.tar.xz",
+    "flavor": "mysql",
+    "minimal": false,
+    "size": 891250172,
+    "short_version": "8.0",
+    "version": "8.0.44",
+    "updated_by": "addUrltoCollection",
+    "notes": "added with version 1.74.0",
+    "date_added": "2026-01-10 11:35"
+   },
+   {
     "name": "mysql-8.2.0-macos13-arm64.tar.gz",
     "checksum": "MD5:c6d8b46d8921d030b28dd0d418862775",
     "OS": "Darwin",
@@ -1531,6 +1561,21 @@
     "updated_by": "addUrltoCollection",
     "notes": "added with version 1.73.3",
     "date_added": "2024-07-02 15:01"
+   },
+   {
+    "name": "mysql-9.5.0-linux-glibc2.28-x86_64.tar.xz",
+    "checksum": "MD5:20544788df2bc6bfbfbe5a61b0d0e3db",
+    "OS": "linux",
+    "arch": "x86_64",
+    "url": "https://dev.mysql.com/get/Downloads/MySQL-9.5/mysql-9.5.0-linux-glibc2.28-x86_64.tar.xz",
+    "flavor": "mysql",
+    "minimal": false,
+    "size": 986167928,
+    "short_version": "9.5",
+    "version": "9.5.0",
+    "updated_by": "addUrltoCollection",
+    "notes": "added with version 1.74.0",
+    "date_added": "2026-01-10 14:35"
    },
    {
     "name": "mysql-cluster-gpl-7.6.10-macos10.14-x86_64.tar.gz",

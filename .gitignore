@@ -8,3 +8,4 @@ test/sort_versions
 test/sort_versions.Darwin
 test/sort_versions.linux
 ts/testdata/
+dbdeployer

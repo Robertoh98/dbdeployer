@@ -465,10 +465,12 @@ func CreateGroupReplication(sandboxDef SandboxDef, origin string, nodes int, mas
 			{globals.ScriptWipeRestartAll, globals.TmplWipeAndRestartAll, true},
 		},
 	}
-	tmplInitNodes = globals.TmplInitNodes84
+
+	tmplInitNodes := globals.TmplInitNodes84
 	if strings.HasPrefix(shortVersion, "5") || strings.HasPrefix(shortVersion, "8.0") {
-		tmplInitNodes := globals.TmplInitNodes
+		tmplInitNodes = globals.TmplInitNodes
 	}
+
 	sbGroup := ScriptBatch{
 		tc:         GroupTemplates,
 		logger:     logger,

@@ -86,6 +86,9 @@ var (
 	//go:embed templates/single/load_grants.gotxt
 	loadGrantsTemplate string
 
+	//go:embed templates/single/load_grants_cluster.gotxt
+	loadGrantsCluster string
+
 	//go:embed templates/single/grants5x.gotxt
 	grantsTemplate5x string
 
@@ -303,6 +306,11 @@ var (
 			Description: "Loads the grants defined for the sandbox",
 			Notes:       "",
 			Contents:    loadGrantsTemplate,
+		},
+		globals.TmplLoadGrantsCluster: TemplateDesc{
+			Description: "Loads the grants defined for the sandbox",
+			Notes:       "",
+			Contents:    loadGrantsCluster,
 		},
 		globals.TmplGrants5x: TemplateDesc{
 			Description: "Grants for sandboxes up to 5.6",

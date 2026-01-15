@@ -66,6 +66,7 @@ type DbdeployerDefaults struct {
 	RemoteTarballUrl              string `json:"remote-tarball-url"`
 	PxcPrefix                     string `json:"pxc-prefix"`
 	NdbPrefix                     string `json:"ndb-prefix"`
+	InnoDBClusterPrefix           string `json:"innodb-cluster-prefix"`
 	DefaultSandboxExecutable      string `json:"default-sandbox-executable"`
 	DownloadNameLinux             string `json:"download-name-linux"`
 	DownloadNameMacOs             string `json:"download-name-macos"`
@@ -133,6 +134,7 @@ var (
 		RemoteCompletionUrl:           "https://raw.githubusercontent.com/datacharmer/dbdeployer/master/docs/dbdeployer_completion.sh",
 		RemoteTarballUrl:              "https://raw.githubusercontent.com/datacharmer/dbdeployer/master/downloads/tarball_list.json",
 		NdbPrefix:                     "ndb_msb_",
+		InnoDBClusterPrefix:           "innodb_msb_",
 		PxcPrefix:                     "pxc_msb_",
 		DefaultSandboxExecutable:      "default",
 		DownloadNameLinux:             "mysql-{{.Version}}-linux-glibc2.17-x86_64{{.Minimal}}.{{.Ext}}",
@@ -403,6 +405,8 @@ func UpdateDefaults(label, value string, storeDefaults bool) {
 		newDefaults.PxcPrefix = value
 	case "ndb-prefix":
 		newDefaults.NdbPrefix = value
+	case "innodb-cluster-prefix":
+		newDefaults.InnoDBClusterPrefix = value
 	case "default-sandbox-executable":
 		newDefaults.DefaultSandboxExecutable = value
 	case "download-url":
@@ -538,6 +542,7 @@ func DefaultsToMap() common.StringMap {
 		"pxc-prefix":                        currentDefaults.PxcPrefix,
 		"NdbPrefix":                         currentDefaults.NdbPrefix,
 		"ndb-prefix":                        currentDefaults.NdbPrefix,
+		"innodb-cluster-prefix":             currentDefaults.InnoDBClusterPrefix,
 		"DefaultSandboxExecutable":          currentDefaults.DefaultSandboxExecutable,
 		"default-sandbox-executable":        currentDefaults.DefaultSandboxExecutable,
 		"download-url":                      currentDefaults.DownloadUrl,

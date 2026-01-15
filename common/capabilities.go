@@ -84,6 +84,7 @@ const (
 	EmbedMySQLShell             = "embed-mysql-shell"
 	CloneServer                 = "clone-server"
 	CircularReplication         = "circular-replication"
+	InnoDBCluster               = "innodb-cluster"
 )
 
 var MySQLCapabilities = Capabilities{
@@ -179,6 +180,10 @@ var MySQLCapabilities = Capabilities{
 		CircularReplication: {
 			Description: "Allow circular replication",
 			Since:       globals.MinimumMySQLAutoIncrementIncrement,
+		},
+		InnoDBCluster: {
+			Description: "Allow InnoDB Cluster",
+			Since:       globals.MinimumInnoDBCluster,
 		},
 	},
 }

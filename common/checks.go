@@ -17,6 +17,7 @@ package common
 
 import (
 	"fmt"
+	"net"
 	"net/url"
 	"os"
 	"path"
@@ -799,6 +800,23 @@ func FindFreePort(basePort int, installedPorts []int, howMany int) (int, error) 
 		return findFreePortSingle(basePort, usedPorts)
 	}
 	return findFreePortRange(basePort, usedPorts, howMany)
+}
+
+// IsPortAvailable checks if a port is actually available on the system
+// by attempting to listen on it. Returns true if the port is free,
+// false if it's in use.
+func IsPortAvailable(port int) bool {
+	ln, err := net.Listen("tcp", net.JoinHostPort("", strconv.Itoa(port)))
+	if err != nil {
+		// If we can't listen, the port is in use
+		return false
+	}
+	if ln != nil {
+		ln.Close()
+		// If we can listen, the port is available
+		return true
+	}
+	return false
 }
 
 // Checks whether a version string is equal or greater than the current compatible version

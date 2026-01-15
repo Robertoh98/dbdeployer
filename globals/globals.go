@@ -174,6 +174,7 @@ const (
 	TopologyValue       = "master-slave"
 	PxcLabel            = "pxc"
 	NdbLabel            = "ndb"
+	InnoDBClusterLabel  = "innodb-cluster"
 	ChangeMasterOptions = "change-master-options"
 
 	// Instantiated in cmd/unpack.go and unpack/unpack.go
@@ -256,6 +257,7 @@ const (
 	ScriptInitDb              = "init_db"
 	ScriptAfterStart          = "after_start"
 	ScriptLoadGrants          = "load_grants"
+	ScriptLoadGrantsCluster   = "load_grants_cluster"
 	ScriptMy                  = "my"
 	ScriptMySandboxCnf        = "my.sandbox.cnf"
 	ScriptMysqlsh             = "mysqlsh"
@@ -287,24 +289,26 @@ const (
 	ScriptSysbenchReady       = "sysbench_ready"
 	ScriptWipeAndRestart      = "wipe_and_restart"
 
-	ScriptCheckMsNodes      = "check_ms_nodes"
-	ScriptCheckNodes        = "check_nodes"
-	ScriptClearAll          = "clear_all"
-	ScriptInitializeMsNodes = "initialize_ms_nodes"
-	ScriptInitializeNodes   = "initialize_nodes"
-	ScriptNoClearAll        = "no_clear_all"
-	ScriptRestartAll        = "restart_all"
-	ScriptSendKillAll       = "send_kill_all"
-	ScriptStartAll          = "start_all"
-	ScriptStatusAll         = "status_all"
-	ScriptStopAll           = "stop_all"
-	ScriptTestReplication   = "test_replication"
-	ScriptTestSbAll         = "test_sb_all"
-	ScriptUseAll            = "use_all"
-	ScriptUseAllAdmin       = "use_all_admin"
-	ScriptExecAll           = "exec_all"
-	ScriptWipeRestartAll    = "wipe_and_restart_all"
-	ScriptMetadataAll       = "metadata_all"
+	ScriptCheckMsNodes           = "check_ms_nodes"
+	ScriptCheckNodes             = "check_nodes"
+	ScriptCheckNodesCluster      = "check_nodes_cluster"
+	ScriptClearAll               = "clear_all"
+	ScriptInitializeMsNodes      = "initialize_ms_nodes"
+	ScriptInitializeNodes        = "initialize_nodes"
+	ScriptInitializeNodesCluster = "initialize_nodes_cluster"
+	ScriptNoClearAll             = "no_clear_all"
+	ScriptRestartAll             = "restart_all"
+	ScriptSendKillAll            = "send_kill_all"
+	ScriptStartAll               = "start_all"
+	ScriptStatusAll              = "status_all"
+	ScriptStopAll                = "stop_all"
+	ScriptTestReplication        = "test_replication"
+	ScriptTestSbAll              = "test_sb_all"
+	ScriptUseAll                 = "use_all"
+	ScriptUseAllAdmin            = "use_all_admin"
+	ScriptExecAll                = "exec_all"
+	ScriptWipeRestartAll         = "wipe_and_restart_all"
+	ScriptMetadataAll            = "metadata_all"
 
 	// These constants are kept for reference
 	// although they are not used directly in the code.
@@ -416,6 +420,7 @@ var (
 	MinimumRootAuthVersion                    = NumericVersion{10, 4, 3}
 	MinimumAdminAddressVersion                = NumericVersion{8, 0, 14}
 	MinimumMySQLShellEmbed                    = NumericVersion{8, 0, 4}
+	MinimumInnoDBCluster                      = NumericVersion{8, 0, 0}
 )
 
 const (
@@ -465,6 +470,7 @@ var AllowedTopologies = []string{
 	FanInLabel,
 	AllMastersLabel,
 	NdbLabel,
+	InnoDBClusterLabel,
 }
 
 // This structure is not used directly by dbdeployer.

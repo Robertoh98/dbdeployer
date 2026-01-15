@@ -309,7 +309,7 @@ func RemoveSuffix(s, suffix string) string {
 // Converts a string to an integer. Exits on error
 func Atoi(val string) int {
 	num, err := strconv.Atoi(val)
-	ErrCheckExitf(err, 1, fmt.Sprintf("Not a valid number: %s (%s)", val, err))
+	ErrCheckExitf(err, 1, "Not a valid number: %s (%s)", val, err)
 	return num
 }
 

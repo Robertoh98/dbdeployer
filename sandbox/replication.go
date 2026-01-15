@@ -557,6 +557,16 @@ func CreateReplicationSandbox(sdef SandboxDef, origin string, replData Replicati
 				common.IntSliceToDottedString(globals.MinimumNdbClusterVersion))
 		}
 		sdef.SandboxDir = path.Join(sdef.SandboxDir, defaults.Defaults().NdbPrefix+common.VersionToName(origin))
+	case globals.InnoDBClusterLabel:
+		isMinimumInnodbCluster, err := common.HasCapability(sdef.Flavor, common.InnoDBCluster, sdef.Version)
+		if err != nil {
+			return err
+		}
+		if !isMinimumInnodbCluster {
+			return fmt.Errorf(globals.ErrFeatureRequiresCapability, "InnoDB Cluster", common.MySQLFlavor,
+				common.IntSliceToDottedString(globals.MinimumInnoDBCluster))
+		}
+		sdef.SandboxDir = path.Join(sdef.SandboxDir, defaults.Defaults().InnoDBClusterPrefix+common.VersionToName(origin))
 	default:
 		return fmt.Errorf("unrecognized topology. Accepted: '%v'", globals.AllowedTopologies)
 	}
@@ -589,6 +599,8 @@ func CreateReplicationSandbox(sdef SandboxDef, origin string, replData Replicati
 		err = CreatePxcReplication(sdef, origin, replData.Nodes, replData.MasterIp)
 	case globals.NdbLabel:
 		err = CreateNdbReplication(sdef, origin, replData.Nodes, replData.NdbNodes, replData.MasterIp)
+	case globals.InnoDBClusterLabel:
+		err = CreateInnoDBClusterReplication(sdef, origin, replData.Nodes, replData.MasterIp)
 	}
 	return err
 }

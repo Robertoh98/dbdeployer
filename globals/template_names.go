@@ -118,6 +118,7 @@ const (
 	TmplSemisyncMasterOptions   = "semisync_master_options"
 	TmplGrants57                = "grants57"
 	TmplLoadGrants              = "load_grants"
+	TmplLoadGrantsCluster       = "load_grants_cluster"
 	TmplMy                      = "my"
 	TmplAfterStart              = "after_start"
 	TmplConnectionInfoJson      = "connection_info_json"
@@ -173,4 +174,9 @@ const (
 	TmplCheckNodes         = "check_nodes"
 	TmplGroupReplOptions   = "group_repl_options"
 	TmplGroupReplOptions84 = "group_repl_options84"
+
+	// cluster
+	TmplClusterOptions         = "cluster_options"
+	TmplInitializeNodesCluster = "initialize_nodes_cluster"
+	TmplCheckClusterNodes      = "check_nodes_cluster"
 )

@@ -253,6 +253,10 @@ func checkPortAvailability(caller string, sandboxType string, installedPorts []i
 	if conflict > 0 {
 		return fmt.Errorf("port conflict detected for %s (%s). Port %d is already used", sandboxType, caller, conflict)
 	}
+	// Also check if the port is actually available on the system
+	if !common.IsPortAvailable(port) {
+		return fmt.Errorf("port conflict detected for %s (%s). Port %d is already in use by another process", sandboxType, caller, port)
+	}
 	return nil
 }
 
@@ -300,6 +304,10 @@ func setMysqlxProperties(sandboxDef SandboxDef, socketDir string) (SandboxDef, e
 			return SandboxDef{}, errors.Wrapf(err, "error detecting free port for MySQLX")
 		}
 	}
+	// Check if the MySQL X port is actually available on the system
+	if !common.IsPortAvailable(mysqlxPort) {
+		return SandboxDef{}, fmt.Errorf("MySQL X port %d is already in use by another process", mysqlxPort)
+	}
 	sandboxDef.MyCnfOptions = append(sandboxDef.MyCnfOptions, fmt.Sprintf("mysqlx-port=%d", mysqlxPort))
 	sandboxDef.MyCnfOptions = append(sandboxDef.MyCnfOptions, fmt.Sprintf("mysqlx-socket=%s/mysqlx-%d.sock", socketDir, mysqlxPort))
 	sandboxDef.MorePorts = append(sandboxDef.MorePorts, mysqlxPort)
@@ -329,6 +337,10 @@ func setAdminPortProperties(sandboxDef SandboxDef) (SandboxDef, error) {
 		if err != nil {
 			return SandboxDef{}, errors.Wrapf(err, "error detecting free admin port")
 		}
+	}
+	// Check if the admin port is actually available on the system
+	if !common.IsPortAvailable(adminPort) {
+		return SandboxDef{}, fmt.Errorf("admin port %d is already in use by another process", adminPort)
 	}
 	sandboxDef.MyCnfOptions = append(sandboxDef.MyCnfOptions, fmt.Sprintf("admin-port=%d", adminPort))
 	sandboxDef.MyCnfOptions = append(sandboxDef.MyCnfOptions, fmt.Sprintf("admin-address=%s", sandboxDef.SbHost))
@@ -734,7 +746,7 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 	if sandboxDef.NodeNum != 0 {
 		data["ReportHost"] = fmt.Sprintf("report-host = node-%d", sandboxDef.NodeNum)
 	}
-	if sandboxDef.SkipReportHost || sandboxDef.SBType == "group-node" {
+	if sandboxDef.SkipReportHost || sandboxDef.SBType == "group-node" || sandboxDef.SBType == "cluster-node" {
 		data["ReportHost"] = ""
 	}
 	if sandboxDef.SkipReportPort {
@@ -986,6 +998,10 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 	sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptGrantsMysql, grantsTemplateName, false})
 	sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptSbInclude, globals.TmplSbInclude, false})
 
+	if sandboxDef.SBType == "cluster-node" {
+		sb.scripts = append(sb.scripts, ScriptDef{globals.ScriptLoadGrantsCluster, globals.TmplLoadGrantsCluster, true})
+	}
+
 	err = writeScripts(sb)
 	if err != nil {
 		return emptyExecutionList, err
@@ -1060,6 +1076,14 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 			execList = append(execList, concurrent.ExecutionList{Logger: logger, Priority: 4, Command: eCmdPreGrants})
 			execList = append(execList, concurrent.ExecutionList{Logger: logger, Priority: 5, Command: eCmdLoadGrants})
 			execList = append(execList, concurrent.ExecutionList{Logger: logger, Priority: 6, Command: eCmdPostGrants})
+			if sandboxDef.SBType == "cluster-node" {
+				eCmdLoadGrantsCluster := concurrent.ExecCommand{
+					Cmd:  path.Join(sandboxDir, globals.ScriptLoadGrantsCluster),
+					Args: []string{},
+				}
+				logger.Printf("Adding load grants cluster command to execution list\n")
+				execList = append(execList, concurrent.ExecutionList{Logger: logger, Priority: 7, Command: eCmdLoadGrantsCluster})
+			}
 		}
 	} else {
 		if !sandboxDef.SkipStart {
@@ -1087,6 +1111,13 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 				_, err = common.RunCmd(path.Join(sandboxDir, globals.ScriptLoadGrants))
 				if err != nil {
 					return emptyExecutionList, err
+				}
+				if sandboxDef.SBType == "cluster-node" {
+					logger.Printf("Running load grants cluster script\n")
+					_, err = common.RunCmd(path.Join(sandboxDir, globals.ScriptLoadGrantsCluster))
+					if err != nil {
+						return emptyExecutionList, err
+					}
 				}
 				logger.Printf("Running post grants script\n")
 				_, err = common.RunCmdWithArgs(path.Join(sandboxDir, globals.ScriptLoadGrants), []string{globals.ScriptPostGrantsSql})

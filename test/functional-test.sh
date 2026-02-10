@@ -1661,6 +1661,33 @@ function ndb_operations {
     done
 }
 
+function innodb_cluster_operations {
+    current_test=innodb_cluster_operations
+    test_header innodb_cluster_operations "" double
+    processes_before=$(pgrep mysqld | wc -l | tr -d ' \t')
+    for V in ${group_versions[*]}
+    do
+        echo "# InnoDB Cluster operations $V"
+        run dbdeployer deploy replication $V --topology=innodb-cluster
+        results "InnoDB Cluster $V"
+        v_path=$(echo innodb_msb_$V| tr '.' '_')
+
+        capture_test run dbdeployer global test
+        capture_test run dbdeployer global test-replication
+        test_use_masters_slaves $V innodb_msb_ 3 3
+        test_ports $V innodb_msb_ 6 3
+        check_for_exit innodb_cluster_operations
+        for cmd in restart_all node1/restart node2/restart node3/restart
+        do
+            run $SANDBOX_HOME/$v_path/$cmd
+            capture_test run dbdeployer global test
+            capture_test run dbdeployer global test-replication
+        done
+        test_deletion $V 1 $processes_before
+        results "innodb-cluster $V - after deletion"
+    done
+}
+
 
 if [ -z "$skip_main_deployment_methods" ]
 then
@@ -1713,6 +1740,10 @@ fi
 if [ -z "$skip_ndb_operations" ]
 then
     ndb_operations
+fi
+if [ -z "$skip_innodb_cluster_operations" ]
+then
+    innodb_cluster_operations
 fi
 if [ -z "$skip_load_data_operations" ]
 then

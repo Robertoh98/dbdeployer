@@ -47,11 +47,18 @@ func SetMockEnvironment(mockUpperDir string) error {
 	if mockUpperDir == "" {
 		mockUpperDir = DefaultMockDir
 	}
+	// If directory already exists, clean it up first (in case of previous failed test run)
 	if common.DirExists(mockUpperDir) {
-		return fmt.Errorf("mock directory %s already exists. Aborting", mockUpperDir)
+		err := os.RemoveAll(mockUpperDir)
+		if err != nil {
+			return fmt.Errorf("error removing existing mock directory %s: %w", mockUpperDir, err)
+		}
 	}
-	PWD := os.Getenv("PWD")
-	home := fmt.Sprintf("%s/%s/home", PWD, mockUpperDir)
+	curDir, err := os.Getwd()
+	if err != nil {
+		return fmt.Errorf("error getting current working directory: %w", err)
+	}
+	home := fmt.Sprintf("%s/%s/home", curDir, mockUpperDir)
 	sandboxBinaryUpper := fmt.Sprintf("%s/opt", home)
 	mockSandboxBinary = fmt.Sprintf("%s/opt/mysql", home)
 	mockSandboxHome = fmt.Sprintf("%s/sandboxes", home)

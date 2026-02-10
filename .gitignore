@@ -10,3 +10,4 @@ test/sort_versions.Darwin
 test/sort_versions.linux
 ts/testdata/
 dbdeployer
+sandbox/mock_dir/

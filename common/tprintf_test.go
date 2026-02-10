@@ -17,9 +17,10 @@ package common
 
 import (
 	"fmt"
+	"testing"
+
 	"github.com/datacharmer/dbdeployer/compare"
 	"github.com/datacharmer/dbdeployer/globals"
-	"testing"
 )
 
 func TestSafeTemplateFill(t *testing.T) {
@@ -64,7 +65,9 @@ func TestSafeTemplateFill(t *testing.T) {
 	result, err := SafeTemplateFill("tmpl2", template, data)
 	compare.OkIsNil("filling template 2", err, t)
 	//             Sun Oct    7  07: 42: 24 CEST 2018
-	reExpected := `\w+ \w+\s+\d+ \d+:\d+:\d+ \w+ \d+`
+	//             Thu Jan   15 11: 23: 02 -03 2026
+	// Pattern matches both word-based timezones (CEST, PST, UTC) and numeric offsets (-03, +05:30)
+	reExpected := `\w+ \w+\s+\d+ \d+:\d+:\d+ \S+ \d+`
 	compare.OkMatchesString("Timestamp", result, reExpected, t)
 
 	// Checks that a missing variables raises an error

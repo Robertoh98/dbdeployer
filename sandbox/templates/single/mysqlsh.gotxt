@@ -5,6 +5,11 @@ source {{.SandboxDir}}/sb_include
 export LD_LIBRARY_PATH=$CLIENT_LD_LIBRARY_PATH
 [ -z "$MYSQL_SHELL" ] && MYSQL_SHELL="{{.MysqlShell}}"
 
+if ! command -v "$MYSQL_SHELL" >/dev/null 2>&1; then
+    echo "MySQL Shell not found ($MYSQL_SHELL). Install it or set MYSQL_SHELL to the path of mysqlsh. Example: MYSQL_SHELL=/Users/robertogarciadebem/Downloads/mysqlshell/bin/mysqlsh dbdeployer [options]"
+    exit 1
+fi
+
 [ -z "$URI" ] && URI="root:{{.DbPassword}}@{{.SbHost}}:{{.MysqlXPort}}"
 
 if [ -f $PIDFILE ]

@@ -69,7 +69,26 @@ func TestGetTarball(t *testing.T) {
 			}
 		})
 	}
-	curDir := os.Getenv("PWD")
+	curDir, err := os.Getwd()
+	require.NoError(t, err, "failed to get current working directory")
+
+	// Helper function to get absolute path of downloaded file
+	getDownloadedPath := func(tb downloads.TarballDescription) string {
+		absPath, err := common.AbsolutePath(tb.Name)
+		if err != nil {
+			// Fallback to current directory if AbsolutePath fails
+			return path.Join(curDir, tb.Name)
+		}
+		return absPath
+	}
+
+	// Helper function to clean up file before/after test
+	cleanupFile := func(filePath string) {
+		if common.FileExists(filePath) {
+			_ = os.Remove(filePath)
+		}
+	}
+
 	for v, tb := range newestList {
 		if tb.Flavor != common.MySQLFlavor {
 			continue
@@ -78,40 +97,61 @@ func TestGetTarball(t *testing.T) {
 		//	continue
 		//}
 		t.Run("latest "+v, func(t *testing.T) {
-			err := GetRemoteTarball(DownloadsOptions{
+			// First, determine what tarball would be downloaded by version lookup
+			minimal := strings.EqualFold(tb.OperatingSystem, "linux")
+			expectedTarball, err := findRemoteTarballByVersion(v, tb.Flavor, tb.OperatingSystem, "", minimal, true, false)
+
+			// Skip if version detection fails (older versions may not have matching tarballs)
+			if err != nil {
+				if strings.Contains(err.Error(), "error detecting latest version") {
+					t.Skipf("No matching tarball found for version %s with OS %s and minimal %v", v, tb.OperatingSystem, minimal)
+				}
+				require.NoError(t, err)
+			}
+
+			// Clean up file before test using the expected tarball name
+			downloadedPath := getDownloadedPath(expectedTarball)
+			cleanupFile(downloadedPath)
+
+			err = GetRemoteTarball(DownloadsOptions{
 				SandboxBinary: sandboxBinary,
 				TarballOS:     tb.OperatingSystem,
 				Flavor:        tb.Flavor,
 				Version:       v,
 				Newest:        true,
-				Minimal:       strings.EqualFold(tb.OperatingSystem, "linux"),
+				Minimal:       minimal,
 			})
 
 			require.NoError(t, err)
-			downloaded := path.Join(curDir, tb.Name)
-			require.FileExists(t, downloaded, "downloaded tarball %s not found", downloaded)
-			_ = os.Remove(downloaded)
+			require.FileExists(t, downloadedPath, "downloaded tarball %s not found", downloadedPath)
+			cleanupFile(downloadedPath)
 		})
 		t.Run("by-name-"+tb.Name, func(t *testing.T) {
+			// Clean up file before test
+			downloadedPath := getDownloadedPath(tb)
+			cleanupFile(downloadedPath)
+
 			err := GetRemoteTarball(DownloadsOptions{
 				TarballName: tb.Name,
 				TarballUrl:  "",
 				TarballOS:   tb.OperatingSystem,
 			})
 			require.NoError(t, err)
-			downloaded := path.Join(curDir, tb.Name)
-			require.FileExists(t, downloaded, "downloaded tarball %s not found", downloaded)
-			_ = os.Remove(downloaded)
+			require.FileExists(t, downloadedPath, "downloaded tarball %s not found", downloadedPath)
+			cleanupFile(downloadedPath)
 		})
 		t.Run("by-URL-"+tb.Name, func(t *testing.T) {
+			// Clean up file before test
+			downloadedPath := getDownloadedPath(tb)
+			cleanupFile(downloadedPath)
+
 			err := GetRemoteTarball(DownloadsOptions{
 				TarballName: "",
 				TarballUrl:  tb.Url,
 			})
 			require.NoError(t, err)
-			downloaded := path.Join(curDir, tb.Name)
-			require.FileExists(t, downloaded, "downloaded tarball %s not found", downloaded)
-			_ = os.Remove(downloaded)
+			require.FileExists(t, downloadedPath, "downloaded tarball %s not found", downloadedPath)
+			cleanupFile(downloadedPath)
 		})
 	}
 }

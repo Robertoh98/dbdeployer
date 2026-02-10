@@ -96,6 +96,33 @@ func testCreateMockSandbox(t *testing.T) {
 		t.Fatal("mock dir creation failed")
 	}
 	compare.OkIsNil("mock creation", err, t)
+
+	// Clean up any existing sandboxes in the mock sandbox home (from previous failed test runs)
+	// This must happen after SetMockEnvironment so defaults are reset and we use the correct paths
+	if common.DirExists(mockSandboxHome) {
+		installed, err := common.GetInstalledSandboxes(mockSandboxHome)
+		if err == nil && len(installed) > 0 {
+			for _, sb := range installed {
+				sandboxPath := path.Join(mockSandboxHome, sb.SandboxName)
+				// Remove sandbox directory directly since we're in a mock environment
+				if common.DirExists(sandboxPath) {
+					_ = os.RemoveAll(sandboxPath)
+				}
+				// Also remove from catalog
+				_ = defaults.DeleteFromCatalog(sandboxPath)
+			}
+		}
+		// Also clean up the sandbox registry
+		if common.FileExists(defaults.SandboxRegistry) {
+			_ = os.Remove(defaults.SandboxRegistry)
+		}
+		// Ensure configuration directory exists
+		configDir := path.Dir(defaults.SandboxRegistry)
+		if !common.DirExists(configDir) {
+			_ = os.MkdirAll(configDir, globals.PublicDirectoryAttr)
+		}
+	}
+
 	var versions = []versionRec{
 		{"5.0.89", "5_0_89", 5089},
 		{"5.1.67", "5_1_67", 5167},

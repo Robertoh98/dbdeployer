@@ -1,3 +1,10 @@
+## 1.75.0	12-Dec-2025
+
+## NEW FEATURES
+
+* Add support for MySQL InnoDB Cluster (topology=innodb-cluster)
+* Add support for adding new tarballs trought dbdeployer downloads add-url 
+
 ## 1.74.0	12-Dec-2025
 
 ## ADJUSTMENTS

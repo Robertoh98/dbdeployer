@@ -110,6 +110,7 @@ const (
 	PromptValue               = "mysql"
 	SocketInDatadirLabel      = "socket-in-datadir"
 	PortAsServerIdLabel       = "port-as-server-id"
+	MysqlshPathLabel          = "mysqlsh-path"
 
 	// Instantiated in cmd/single.go
 	MasterLabel    = "master"

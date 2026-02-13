@@ -177,6 +177,7 @@ const (
 
 	// cluster
 	TmplClusterOptions         = "cluster_options"
+	TmplClusterOptions84       = "cluster_options84"
 	TmplInitializeNodesCluster = "initialize_nodes_cluster"
 	TmplCheckClusterNodes      = "check_nodes_cluster"
 )

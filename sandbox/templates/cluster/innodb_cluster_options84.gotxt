@@ -1,0 +1,4 @@
+# After customization, these options are added to my.sandbox.cnf
+binlog_checksum=NONE
+log_slave_updates=ON
+report-host=127.0.0.1

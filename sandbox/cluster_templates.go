@@ -30,6 +30,9 @@ var (
 	//go:embed templates/cluster/innodb_cluster_options.gotxt
 	clusterOptionsTemplate string
 
+	//go:embed templates/cluster/innodb_cluster_options84.gotxt
+	clusterOptions84Template string
+
 	//go:embed templates/cluster/init_cluster_nodes.gotxt
 	initClusterNodesTemplate string
 
@@ -41,6 +44,11 @@ var (
 			Description: "Set the correct my.cnf configurations",
 			Notes:       "",
 			Contents:    clusterOptionsTemplate,
+		},
+		globals.TmplClusterOptions84: TemplateDesc{
+			Description: "Set the correct my.cnf configurations for 8.4.x",
+			Notes:       "",
+			Contents:    clusterOptions84Template,
 		},
 		globals.TmplInitializeNodesCluster: TemplateDesc{
 			Description: "Initialize InnoDB Cluster nodes using MySQL Shell",

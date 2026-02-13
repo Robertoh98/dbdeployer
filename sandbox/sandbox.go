@@ -108,6 +108,7 @@ type SandboxDef struct {
 	Force                bool             // Overwrite an existing sandbox with same target
 	ExposeDdTables       bool             // Show hidden data dictionary tables (MySQL 8.0.0+)
 	RunConcurrently      bool             // Run multiple sandbox creation concurrently
+	MysqlshPath          string           // Path to mysqlsh executable
 }
 
 type ScriptDef struct {
@@ -617,7 +618,12 @@ func createSingleSandbox(sandboxDef SandboxDef) (execList []concurrent.Execution
 			}
 		}
 	}
-	mysqlshExecutable := fmt.Sprintf("%s/bin/mysqlsh", sandboxDef.Basedir)
+	var mysqlshExecutable string
+	if mysqlshPath := defaults.Defaults().MysqlshPath; mysqlshPath != "" {
+		mysqlshExecutable = mysqlshPath + "/bin/mysqlsh"
+	} else {
+		mysqlshExecutable = fmt.Sprintf("%s/bin/mysqlsh", sandboxDef.Basedir)
+	}
 	if !common.ExecExists(mysqlshExecutable) {
 		mysqlshExecutable = "mysqlsh"
 	}

@@ -147,6 +147,7 @@ func CreateInnoDBClusterReplication(sandboxDef SandboxDef, origin string, nodes 
 	}
 	var data = common.StringMap{
 		"ShellPath":         sandboxDef.ShellPath,
+		"MysqlshPath":       sandboxDef.MysqlshPath,
 		"Copyright":         globals.ShellScriptCopyright,
 		"AppVersion":        common.VersionDef,
 		"DateTime":          timestamp.Format(time.UnixDate),
@@ -209,6 +210,7 @@ func CreateInnoDBClusterReplication(sandboxDef SandboxDef, origin string, nodes 
 		sandboxDef.Port = basePort + i
 		data["Nodes"] = append(data["Nodes"].([]common.StringMap), common.StringMap{
 			"ShellPath":         sandboxDef.ShellPath,
+			"MysqlshPath":       sandboxDef.MysqlshPath,
 			"Copyright":         globals.ShellScriptCopyright,
 			"AppVersion":        common.VersionDef,
 			"DateTime":          timestamp.Format(time.UnixDate),
@@ -252,8 +254,14 @@ func CreateInnoDBClusterReplication(sandboxDef SandboxDef, origin string, nodes 
 			"LocalAddresses": fmt.Sprintf("%s:%d", masterIp, groupPort),
 		}
 
+		tmplOptions := globals.TmplClusterOptions84
+		if strings.HasPrefix(shortVersion, "8.0") {
+			tmplOptions = globals.TmplClusterOptions
+		}
+
 		replOptionsText, err := common.SafeTemplateFill("group_replication",
-			ClusterTemplates[globals.TmplClusterOptions].Contents, replicationData)
+			ClusterTemplates[tmplOptions].Contents, replicationData)
+
 		if err != nil {
 			return err
 		}

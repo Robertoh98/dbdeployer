@@ -1,4 +1,11 @@
-## 1.75.0	12-Dec-2025
+## 1.75.1	13-Feb-2026
+
+## ADJUSTMENTS
+
+* Fixing the InnoDB Cluster for MySQL 8.4 or greater
+* Adding the flag --mysqlsh-path for setting the path of MySQL Shell binary 
+
+## 1.75.0	10-Feb-2026
 
 ## NEW FEATURES
 

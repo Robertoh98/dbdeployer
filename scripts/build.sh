@@ -122,7 +122,9 @@ function build_binary {
 
 function pack_binary {
     binary=$1
-    tar -c $binary | gzip -c > ${binary}.tar.gz
+    # On macOS, avoid storing extended attributes and ._ resource fork files in the tarball
+    [ "$(uname -s)" = "Darwin" ] && export COPYFILE_DISABLE=1
+    tar -c --no-xattrs $binary | gzip -c > ${binary}.tar.gz
     shrink $binary
     make_signature $binary
     make_signature ${binary}.tar.gz
